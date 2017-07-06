@@ -52,17 +52,18 @@ class AESCipher:
         plaintext = cipher.decrypt(enc)
         check = type(unpad(plaintext))
         if check == bytes:
-            return 0
-        else:
             return 1
+        else:
+            return 0
 
 
 aes = AESCipher()
 with open('Plaintext', 'rb') as data_file:
     msg = data_file.read()
 
-d1 = aes.decrypt_check(aes.encrypt(msg))
+cipher = aes.encrypt(msg)
+d1 = aes.decrypt_check(cipher)
 print(d1)
-newmsg = msg[0:-1] + b'c'
-d2 = aes.decrypt_check(aes.encrypt(newmsg))
+tamper_cipher = cipher[0:-1] + b'c'
+d2 = aes.decrypt_check(tamper_cipher)
 print(d2)

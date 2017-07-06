@@ -39,9 +39,11 @@ class AESCipher:
         """
         raw = pad(raw)
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
+        with open('Ciphertext', 'wb+') as cipher_file:
+            cipher_file.write(self.iv + cipher.encrypt(raw))
         return codecs.encode((self.iv + cipher.encrypt(raw)), 'hex_codec')
 
-    def decrypt(self, enc):
+    def decrypt_check(self, enc):
         """
         Requires hex encoded param to decrypt
         """
@@ -50,11 +52,16 @@ class AESCipher:
         enc = enc[16:]
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         plaintext = cipher.decrypt(enc)
-        return unpad(plaintext)
+        check = type(unpad(plaintext))
+        if check == bytes:
+            return 0
+        else:
+            return 1
 
 
 aes = AESCipher()
-with open('data', 'rb') as data_file:
+with open('Plaintext', 'rb') as data_file:
     msg = data_file.read()
 
-d = aes.decrypt(aes.encrypt(msg))
+d = aes.decrypt_check(aes.encrypt(msg))
+print(d)

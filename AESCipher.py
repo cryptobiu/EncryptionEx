@@ -13,7 +13,7 @@ pad = lambda s: s + b"".join([bytes(chr(BS - len(s) % BS), 'utf8')]*(BS - len(s)
 # unpadding function:
 def unpad(s):
     pad = int(s[len(s) - 1])
-    if pad <= 0 or pad > len(s):
+    if pad <= 0 or pad > 16:
         return False
     for i in s[len(s) - pad:]:
         if i != pad:
@@ -55,6 +55,16 @@ class AESCipher:
             return 1
         else:
             return 0
+
+    def decrypt_process(self, enc):
+        """
+        Requires hex encoded param to decrypt
+        """
+        enc = codecs.decode(enc, 'hex_codec')
+        cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
+        plaintext = cipher.decrypt(enc)
+        check = type(unpad(plaintext))
+        return 1
 
 
 aes = AESCipher()
